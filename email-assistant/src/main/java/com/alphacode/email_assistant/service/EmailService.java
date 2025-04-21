@@ -18,7 +18,7 @@ public class EmailService {
 
     @Value("${gemini.api.url}")
     private String geminiApiUrl;
-    
+
     @Value("${gemini.api.key}")
     private String geminiApiKey;
 
@@ -41,17 +41,19 @@ public class EmailService {
         );
 
         //Do request and get the response
-        String response = webClient.post()
-                .uri(geminiApiUrl + geminiApiKey)
-                .header("Content-Type","application/json")
-                .bodyValue(requestBody)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        try {
+            String response = webClient.post()
+                    .uri(geminiApiUrl + geminiApiKey) // Fixed URL
+                    .header("Content-Type", "application/json")
+                    .bodyValue(requestBody)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
 
-        //Return the response
-
-        return extractResponseContent(response);
+            return extractResponseContent(response);
+        } catch (Exception e) {
+            throw new RuntimeException("Gemini API call failed: " + e.getMessage(), e);
+        }
     }
 
     private String extractResponseContent(String response) {
@@ -60,7 +62,7 @@ public class EmailService {
             JsonNode root = mapper.readTree(response);
             return root.path("candidates")
                     .get(0)
-                    .path("contents")
+                    .path("content")
                     .path("parts")
                     .get(0)
                     .path("text")
