@@ -1,0 +1,12 @@
+export default {
+    content: [
+      "./index.html",
+      "./src/**/*.{js,jsx,ts,tsx}",
+    ],
+    theme: {
+      extend: {},
+    },
+    plugins: [],
+    darkMode: 'class', // optional, if you want dark mode toggle
+  }
+  
